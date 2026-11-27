@@ -1,4 +1,4 @@
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import {
   describe, it, expect, beforeEach, afterEach, vi,
 } from "vitest";
@@ -70,6 +70,16 @@ describe("authorized Git worktrees", () => {
 
   it("accepts an explicitly authorized worktree", () => {
     vi.stubEnv("UNDERSTAND_GIT_COMMON_DIR", commonDir);
+
+    if (process.platform === "win32") {
+      console.error("[worktree-diagnostic]", JSON.stringify({
+        commonDir,
+        gitDir,
+        worktree,
+        gitReportedDir: git(worktree, "rev-parse", "--absolute-git-dir"),
+        pointer: readFileSync(join(worktree, ".git"), "utf8"),
+      }));
+    }
 
     expect(() => validateGitRepository(worktree)).not.toThrow();
   });
