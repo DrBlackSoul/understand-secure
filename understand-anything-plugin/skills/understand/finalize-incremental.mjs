@@ -552,7 +552,7 @@ if (isCliEntry()) {
     await main();
   } catch (error) {
     process.stderr.write(`finalize-incremental.mjs failed: ${error.message}\n${error.stack}\n`);
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 

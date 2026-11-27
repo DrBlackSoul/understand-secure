@@ -97,7 +97,7 @@ function readBoundedFile(root, target, maxBytes) {
       throw new Error("File exceeds size limit");
     }
 
-    if (!isInsideRoot(root, fs.realpathSync(absolute))) {
+    if (!isInsideRoot(root, fs.realpathSync.native(absolute))) {
       throw new Error("Resolved file outside authorized root");
     }
 
@@ -180,7 +180,7 @@ if (privateMode && !openBrowser) {
   process.exit(1);
 }
 
-projectRoot = fs.realpathSync(projectRoot);
+projectRoot = fs.realpathSync.native(projectRoot);
 
 if (!fs.existsSync(DIST_DIR)) {
   console.error(

@@ -2067,6 +2067,23 @@ describe('large repository benchmark CLI', () => {
       readFileSync(join(result.artifactRoot, 'scan-result.json'), 'utf-8'),
     );
 
+    if (process.platform === 'win32') {
+      const batches = JSON.parse(
+        readFileSync(join(result.artifactRoot, 'batches.json'), 'utf-8'),
+      );
+
+      console.error('[benchmark-diagnostic]', JSON.stringify({
+        scanFiles: scan.files.map(file => file.path),
+        batchFiles: batches.batches.flatMap(
+          batch => batch.files.map(file => file.path),
+        ),
+        status: result.report.status,
+        integrity: result.report.integrity,
+        structure: result.report.stages.structure,
+        warnings: result.report.warnings,
+      }));
+    }
+
     expect(removedAtStructure).toBe(true);
     expect(result.exitCode).toBe(0);
     expect(result.report.status).toBe('degraded');

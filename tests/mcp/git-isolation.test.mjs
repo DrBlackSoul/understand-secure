@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, symlinkSync, linkSync } from "node:fs";
+import { realpathSync, mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, symlinkSync, linkSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { changedFiles } from "../../understand-anything-plugin/packages/mcp/lib/changed-files.mjs";
@@ -32,7 +32,7 @@ describe("MCP Git isolation", () => {
   let outside;
 
   beforeEach(() => {
-    sandbox = mkdtempSync(join(tmpdir(), "ua-git-security-"));
+    sandbox = realpathSync.native(mkdtempSync(join(tmpdir(), "ua-git-security-")));
     project = join(sandbox, "project");
     outside = join(sandbox, "outside");
 

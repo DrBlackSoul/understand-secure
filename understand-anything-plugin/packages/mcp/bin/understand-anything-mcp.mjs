@@ -52,7 +52,7 @@ const { version: SERVER_VERSION } = JSON.parse(
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function canonicalProjectRoot(raw) {
-  const resolved = fs.realpathSync(path.resolve(raw));
+  const resolved = fs.realpathSync.native(path.resolve(raw));
 
   if (!fs.statSync(resolved).isDirectory()) {
     throw new Error("Invalid project directory");
