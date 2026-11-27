@@ -2057,7 +2057,14 @@ describe('large repository benchmark CLI', () => {
     const result = await benchmark.runBenchmark(options, {
       onProgress(stage) {
         if (stage === 'structure') {
-          rmSync(join(subject, 'src', 'math.ts'));
+          const source = join(subject, 'src', 'math.ts');
+          const destination = join(root, 'removed-math.ts');
+
+          renameSync(source, destination);
+
+          expect(existsSync(source)).toBe(false);
+          expect(existsSync(destination)).toBe(true);
+
           removedAtStructure = true;
         }
       },
