@@ -45,6 +45,15 @@ function readMetadata(filename: string): string {
   return value;
 }
 
+function samePath(left: string, right: string): boolean {
+  const normalizeDrive = (value: string): string =>
+    process.platform === "win32"
+      ? value.replace(/^[a-z]:/i, (drive) => drive.toUpperCase())
+      : value;
+
+  return normalizeDrive(left) === normalizeDrive(right);
+}
+
 function requireCanonicalDirectory(target: string): string {
   const absolute = resolve(target);
   const stat = lstatSync(absolute);
@@ -52,7 +61,7 @@ function requireCanonicalDirectory(target: string): string {
   if (
     stat.isSymbolicLink() ||
     !stat.isDirectory() ||
-    realpathSync(absolute) !== absolute
+    !samePath(realpathSync(absolute), absolute)
   ) {
     throw new Error("Unsafe Git metadata directory");
   }
@@ -81,8 +90,8 @@ function resolveLinkedWorktree(marker: string) {
   );
 
   if (
-    dirname(gitDir) !== worktreesDir ||
-    gitDir !== join(worktreesDir, basename(gitDir))
+    !samePath(dirname(gitDir), worktreesDir) ||
+    !samePath(gitDir, join(worktreesDir, basename(gitDir)))
   ) {
     throw new Error("Git directory outside authorized worktrees");
   }
@@ -94,7 +103,7 @@ function resolveLinkedWorktree(marker: string) {
     readMetadata(join(gitDir, "commondir")),
   );
 
-  if (declaredCommonDir !== commonDir) {
+  if (!samePath(declaredCommonDir, commonDir)) {
     throw new Error("Git common directory mismatch");
   }
 
@@ -103,7 +112,7 @@ function resolveLinkedWorktree(marker: string) {
     readMetadata(join(gitDir, "gitdir")),
   );
 
-  if (backlink !== marker) {
+  if (!samePath(backlink, marker)) {
     throw new Error("Git worktree backlink mismatch");
   }
 
