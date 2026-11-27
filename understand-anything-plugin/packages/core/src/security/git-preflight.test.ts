@@ -38,7 +38,7 @@ describe("authorized Git worktrees", () => {
   beforeEach(() => {
     vi.stubEnv("UNDERSTAND_GIT_COMMON_DIR", undefined);
 
-    sandbox = realpathSync(
+    sandbox = realpathSync.native(
       mkdtempSync(join(tmpdir(), "ua-worktree-")),
     );
 
@@ -55,7 +55,7 @@ describe("authorized Git worktrees", () => {
     git(project, "worktree", "add", "--detach", worktree, "HEAD");
 
     commonDir = join(project, ".git");
-    gitDir = realpathSync(
+    gitDir = realpathSync.native(
       git(worktree, "rev-parse", "--absolute-git-dir"),
     );
   });
@@ -195,7 +195,7 @@ describe("Git project authorization boundary", () => {
   let root: string;
 
   beforeEach(() => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), "ua-git-boundary-")));
+    root = realpathSync.native(mkdtempSync(join(tmpdir(), "ua-git-boundary-")));
 
     execFileSync("git", ["init", root], {
       env: createSafeGitEnv(),
@@ -223,7 +223,7 @@ describe("Git project authorization boundary", () => {
   });
 
   it("rejects a project outside the authorized boundary", () => {
-    const boundary = realpathSync(
+    const boundary = realpathSync.native(
       mkdtempSync(join(tmpdir(), "ua-git-other-")),
     );
 

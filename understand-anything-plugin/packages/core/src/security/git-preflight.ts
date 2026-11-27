@@ -61,7 +61,7 @@ function requireCanonicalDirectory(target: string): string {
   if (
     stat.isSymbolicLink() ||
     !stat.isDirectory() ||
-    !samePath(realpathSync(absolute), absolute)
+    !samePath(realpathSync.native(absolute), absolute)
   ) {
     throw new Error("Unsafe Git metadata directory");
   }
@@ -127,7 +127,7 @@ function findGitDirectory(projectRoot: string): {
   gitDir: string;
   commonDir: string;
 } {
-  let current = realpathSync(projectRoot);
+  let current = realpathSync.native(projectRoot);
 
   const authorizedRoot = process.env.UNDERSTAND_PROJECT_ROOT;
   const boundary = authorizedRoot
@@ -231,7 +231,7 @@ export function validateGitRepository(projectRoot: string): void {
   try {
     const { gitDir, commonDir } = findGitDirectory(projectRoot);
 
-    const isolatedDir = realpathSync(
+    const isolatedDir = realpathSync.native(
       mkdtempSync(join(tmpdir(), "ua-git-config-")),
     );
 
